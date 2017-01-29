@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://schema.tailrec.io/sbt-aws-fun"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://tailrec.io.s3-website-us-west-2.amazonaws.com/schema/sbt-aws-fun-1.0.xsd">
+    <default>
+        <regions>
+            <region>us-west-1</region>
+            <region>us-west-2</region>
+        </regions>
+        <role>lambda_basic_execution</role>
+        <memory>128</memory>
+        <timeout>30</timeout>
+    </default>
+    <artifacts>
+        <artifact id="image" minified="true" />
+    </artifacts>
+    <functions>
+        <function>
+            <name>img-resizer</name> 
+            <artifact>image</artifact>
+            <regions>
+                <region>us-west-1</region>
+            </regions>
+            <role>lambda_basic_execution</role>
+            <handler>
+                <class>io.tailrec.lambda.ImageResizer</class>
+                <method>resize</method>
+                <return-type>void</return-type>
+            </handler>
+            <description>Create a thumbnail 36x36 when a new object is put in S3</description>
+            <memory>192</memory>
+            <timeout>10</timeout>
+        </function>
+    </functions>
+</configuration>
+

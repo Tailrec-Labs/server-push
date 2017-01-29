@@ -1,0 +1,10 @@
+@(channel: String, protocol: String, endpoint: String)(implicit request: RequestHeader)
+
+@main("Powered by Amazon SNS and Akka EventBus", channel, protocol, endpoint) {
+  
+  @if(protocol == "comet"){
+    <iframe id="comet" style="display: none;" src="@routes.AmazonSNSChatController.comet(channel).unique"></iframe>
+  }
+  <script type="text/javascript" charset="utf-8" src="@routes.AmazonSNSChatController.pushJs(channel, protocol)"></script>
+  
+}

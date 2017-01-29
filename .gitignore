@@ -1,0 +1,15 @@
+bin/
+logs/
+target/
+project/target
+/.idea
+/.idea_modules
+/.classpath
+/.project
+/.settings
+/app/test
+/RUNNING_PID
+.cache-main
+
+dump.rdb
+conf/credentials.conf

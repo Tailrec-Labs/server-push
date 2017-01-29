@@ -1,0 +1,7 @@
+@(channel: String, protocol: String, endpoint: String)(implicit request: RequestHeader)
+
+@main("Powered by Redis Pub/Sub", channel, protocol, endpoint) {
+  
+  <script type="text/javascript" charset="utf-8" src="@routes.RedisChatController.pushJs(channel, protocol)"></script>
+  
+}

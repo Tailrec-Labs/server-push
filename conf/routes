@@ -1,0 +1,53 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# An example controller showing a sample home page
+GET     /sqs                                        controllers.AmazonSQSChatController.index
+POST    /sqs/publish                                controllers.AmazonSQSChatController.publish
+GET     /sqs/ws/:channel                            controllers.AmazonSQSChatController.ws(channel: String)
+GET     /sqs/sse/:channel                           controllers.AmazonSQSChatController.sse(channel: String)
+GET     /sqs/comet/:channel                         controllers.AmazonSQSChatController.comet(channel: String)
+GET     /assets/javascripts/sqs-push.js             controllers.AmazonSQSChatController.pushJs(channel: String, protocol: String)
+
+GET     /sns                                        controllers.AmazonSNSChatController.index
+POST    /sns/hook                                   controllers.AmazonSNSChatController.hook
+POST    /sns/publish                                controllers.AmazonSNSChatController.publish
+GET     /sns/ws/:channel                            controllers.AmazonSNSChatController.ws(channel: String)
+GET     /sns/sse/:channel                           controllers.AmazonSNSChatController.sse(channel: String)
+GET     /sns/comet/:channel                         controllers.AmazonSNSChatController.comet(channel: String)
+GET     /assets/javascripts/sns-push.js             controllers.AmazonSNSChatController.pushJs(channel: String, protocol: String)
+
+GET     /jms-queue                                  controllers.ActiveMQQueueChatController.index
+POST    /jms-queue/publish                          controllers.ActiveMQQueueChatController.publish
+GET     /jms-queue/ws/:channel                      controllers.ActiveMQQueueChatController.ws(channel: String)
+GET     /jms-queue/sse/:channel                     controllers.ActiveMQQueueChatController.sse(channel: String)
+GET     /jms-queue/comet/:channel                   controllers.ActiveMQQueueChatController.comet(channel: String)
+GET     /assets/javascripts/jms-queue-push.js       controllers.ActiveMQQueueChatController.pushJs(channel: String, protocol: String)
+
+GET     /jms-topic                                  controllers.ActiveMQTopicChatController.index
+POST    /jms-topic/publish                          controllers.ActiveMQTopicChatController.publish
+GET     /jms-topic/ws/:channel                      controllers.ActiveMQTopicChatController.ws(channel: String)
+GET     /jms-topic/sse/:channel                     controllers.ActiveMQTopicChatController.sse(channel: String)
+GET     /jms-topic/comet/:channel                   controllers.ActiveMQTopicChatController.comet(channel: String)
+GET     /assets/javascripts/jms-topic-push.js       controllers.ActiveMQTopicChatController.pushJs(channel: String, protocol: String)
+
+GET     /redis                                      controllers.RedisChatController.index
+POST    /redis/publish                              controllers.RedisChatController.publish
+GET     /redis/ws/:channel                          controllers.RedisChatController.ws(channel: String)
+GET     /assets/javascripts/redis-push.js           controllers.RedisChatController.pushJs(channel: String, protocol: String)
+
+GET     /eventbus                                   controllers.EventBusChatController.index
+POST    /eventbus/publish                           controllers.EventBusChatController.publish
+GET     /eventbus/ws/:channel                       controllers.EventBusChatController.ws(channel: String)
+GET     /eventbus/sse/:channel                      controllers.EventBusChatController.sse(channel: String)
+GET     /eventbus/comet/:channel                    controllers.EventBusChatController.comet(channel: String)
+GET     /assets/javascripts/eventbus-push.js        controllers.EventBusChatController.pushJs(channel: String, protocol: String)
+
+# An example controller showing how to use dependency injection
+GET     /count                      controllers.CountController.count
+# An example controller showing how to write asynchronous code
+GET     /message                    controllers.AsyncController.message
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

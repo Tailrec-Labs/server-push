@@ -1,0 +1,214 @@
+@(title: String, channel: String, protocol: String, endpoint: String)(content: Html)
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Server Push</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")" />
+    <link rel="stylesheet" media="screen" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/t/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-colvis-1.1.2,b-html5-1.1.2,b-print-1.1.2,fh-3.1.1/datatables.min.css"/>
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")" />
+    <script src="//code.jquery.com/jquery-2.2.1.min.js" type="text/javascript"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/t/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-colvis-1.1.2,b-html5-1.1.2,b-print-1.1.2,fh-3.1.1/datatables.min.js"></script>
+    <script src="@routes.Assets.versioned("javascripts/commons.js")" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h3>Server Push Chat</h3>
+      <h4>@title</h4>
+      <form id="config-form">
+        <div class="row">
+          <div class="form-group col-xs-3">
+            <label for="protocol">Protocol</label>
+            <select id="protocol" name="protocol" class="form-control">
+              @for(each <- List(("ws","WebSocket"), ("sse", "SSE"), ("comet", "Comet"))){
+                <option value="@each._1" 
+                  @if(protocol==each._1){selected="selected"}>@each._2</option>
+              }
+            </select>
+          </div>
+          <div class="form-group col-xs-3">
+            <label for="channel">Channel</label>
+            <select id="channel" name="channel" class="form-control">
+              @for(each <- List("Default", "Scala", "Python", "Haskell", "Java", "Ruby", "Kotlin", "Swift", "Rust", "Go")){
+                <option value="@each.toLowerCase" 
+                  @if(channel.equalsIgnoreCase(each)){selected="selected"}>@each</option>
+              }
+            </select>
+          </div>
+          <div class="form-group col-xs-3">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-control" value="Alice" />
+          </div>
+        </div>
+      </form>
+      <br />
+      
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#tab-chat" data-mode="chat">Chat</a></li>
+        <li><a href="#tab-benchmark" data-mode="benchmark">Benchmark</a></li>
+      </ul>
+      <div class="tab-content">
+        <div id="tab-chat" class="tab-pane fade in active">
+          <div style="margin: 20px 10px">
+            <div class="form-group">
+              <label for="message">Message</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="message" placeholder="Type message then hit enter">
+                <span class="input-group-btn">
+                <button id="submit" type="button" class="btn btn-default">Send</button>
+                </span>
+              </div>
+            </div>
+            <div>
+              <p id="messages"></p>
+            </div>
+          </div>
+        </div>
+        <div id="tab-benchmark" class="tab-pane fade">
+          <div style="margin: 20px 10px">
+            <form class="form-inline">
+              <div class="form-group">
+                <label for="num-of-msg">Number of Messages</label>
+                <input type="number" id="num-of-msg" class="form-control" value="2" max="2000" min="1" maxlength="4"/>
+              </div>
+              &nbsp;
+              <div class="form-group">
+                <label for="len-of-msg">Message Length</label>
+                <input type="number" id="len-of-msg" class="form-control" value="32" maxlength="5"/>
+              </div>
+              &nbsp;
+              <div class="checkbox">
+                <label for="show-result">Show Result</label>
+                <input type="checkbox" id="show-result" checked="checked"/>
+              </div>
+              <div class="checkbox">
+                <label for="send-all">Send All at Once</label>
+                <input type="checkbox" id="send-all" />
+              </div>
+              &nbsp;
+              <div class="checkbox">
+                <label for="async-request">Async Request</label>
+                <input type="checkbox" id="async-request" checked="checked"/>
+              </div>
+              &nbsp;&nbsp;
+              <button id="benchmark" type="button" class="btn btn-primary">Benchmark</button>
+            </form>
+            <br />
+            <div id="result-alert" class="alert alert-info alert-dismissible" role="alert">
+              <p id="result-summary"></p>
+            </div>
+            <div id="progress-wrap" class="progress">
+              <div id="progress" class="progress-bar progress-bar-striped" role="progressbar" 
+                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+            <table id="result-table" class="table table-hover dataTable" style="width:100%">
+              <thead>
+                <tr>
+                  <th>Message</th>
+                  <th>Label</th>
+                  <th>Timestamp</th>
+                  <th>Server</th>
+                  <th>RTT (ms)</th>
+                  <th>PT (ms)</th>
+                  <th>TxT (ms)</th>
+                  <th>Tx Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            <div>
+              <ul>
+                <li>RTT (ms) = Round-Trip Time (in milliseconds)</li>
+                <li>PT (ms) = Processing Time (in milliseconds)</li>
+                <li>TxT (ms) = Transmission Time (in milliseconds)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      @* And here's where we render the `Html` object containing
+       * the page content. *@
+      @content
+    </div>
+    <script type="text/javascript">
+      var server = {} //global variable
+      server.publish = function(params){
+        var len = parseInt($("#len-of-msg").val())
+        params.body = randomString(len)
+        params.timestamp = Date.now()
+        $.post("@endpoint", $.param(params))
+      }
+      $(function(){
+        $("#progress-wrap").hide()
+        $("#result-alert").hide()
+        
+        $("#protocol, #channel").change(function(){
+          $("#config-form").submit();
+        })
+        function publishMessage() {
+          $("#message").attr("disabled", "disabled")
+          var params = {
+            "channel": "@channel",
+            "username": $("#username").val(),
+            "body": $("#message").val(),
+            "timestamp": Date.now()
+          }
+          $.post("@endpoint", $.param(params)).success(function(){
+            $("#message" ).val("")
+            $("#message").removeAttr("disabled")
+          })
+        }
+        $("#submit").click(function(){
+          publishMessage()
+        })
+        $("#message").keypress(function(e){
+          if(e.which == 13) publishMessage()
+        })
+        $("#show-result").click(function(){
+          var tableWrapper = $("#result-table").parents('div.dataTables_wrapper').first()
+          if($(this).is(":checked")){
+            tableWrapper.show()
+          }else{
+            tableWrapper.hide()
+          }
+        })
+        $(".nav-tabs a").click(function (e) {
+          e.preventDefault()
+          //mode variable is in push.scala.js
+          mode = $(this).attr("data-mode") 
+          $(this).tab("show")
+        })
+        $("#benchmark").click(function(){
+          $("#progress-wrap").fadeIn()
+          $("#result-alert").fadeOut()
+          $(this).attr("disabled", "disabled")
+          var num = parseInt($("#num-of-msg").val())
+          newBenchmark(num)
+          
+          var params = {
+            "channel": "@channel",
+            "username": $("#username").val(),
+            "n": num
+          }
+          
+          if(isSendAllAtOnce()){
+            for (i = 1; i <= num; i++) {
+              params.label = i
+              server.publish(params)
+            }
+          }else{
+            params.label = 1
+            server.publish(params)
+          }
+          $(this).removeAttr("disabled")
+        })
+      })
+    </script>
+  </body>
+</html>

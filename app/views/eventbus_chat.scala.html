@@ -1,0 +1,10 @@
+@(channel: String, protocol: String, endpoint: String)(implicit request: RequestHeader)
+
+@main("Powered by Akka EventBus", channel, protocol, endpoint) {
+  
+  @if(protocol == "comet"){
+    <iframe id="comet" style="display: none;" src="@routes.EventBusChatController.comet(channel).unique"></iframe>
+  }
+  <script type="text/javascript" charset="utf-8" src="@routes.EventBusChatController.pushJs(channel, protocol)"></script>
+  
+}
